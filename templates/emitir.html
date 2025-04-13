@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <title>Emissão de Senhas</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/emitir.css') }}">
+</head>
+<body>
+    <h1>Emitir Senha</h1>
+
+    {% if mensagem %}
+        <p style="color: green;">{{ mensagem }}</p>
+    {% endif %}
+
+    <form method="POST" action="{{ url_for('senha.emitir') }}">
+        <label for="nome">Nome:</label>
+        <input type="text" name="nome" required>
+        <label for="cpf">CPF:</label>
+        <input type="text" name="cpf" required>
+        <label for="tipo">Tipo de Atendimento:</label>
+        <select name="tipo">
+            <option value="N">Normal</option>
+            <option value="P">Prioritário</option>
+        </select>
+
+        <button type="submit">Emitir Senha</button>
+    </form>
+</body>
+</html>
+
