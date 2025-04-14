@@ -5,14 +5,13 @@
     <title>Emissão de Senhas</title>
     <link rel="stylesheet" href="{{ url_for('static', filename='css/emitir.css') }}">
     <script>
-        // Máscara de CPF com limite de 11 dígitos
         document.addEventListener("DOMContentLoaded", () => {
             const cpf = document.getElementById('cpf');
             if (cpf) {
                 cpf.addEventListener('input', () => {
                     cpf.value = cpf.value
-                        .replace(/\D/g, '')
-                        .slice(0, 11)
+                        .replace(/\D/g, '') // Remove caracteres não numéricos
+                        .slice(0, 11) // Limita a 11 dígitos
                         .replace(/(\d{3})(\d)/, '$1.$2')
                         .replace(/(\d{3})(\d)/, '$1.$2')
                         .replace(/(\d{3})(\d{1,2})$/, '$1-$2');
@@ -22,9 +21,16 @@
             // Bloquear clique duplo e alterar texto do botão
             const form = document.querySelector("form");
             const botao = document.getElementById("botaoEmitir");
-            form.addEventListener("submit", function () {
-                botao.innerText = "Emitindo...";
-                botao.disabled = true;
+            form.addEventListener("submit", function (event) {
+                // Verifica se o CPF tem 11 dígitos
+                const cpfValue = document.getElementById('cpf').value.replace(/\D/g, '');
+                if (cpfValue.length !== 11) {
+                    alert("Por favor, insira um CPF completo com 11 dígitos.");
+                    event.preventDefault(); // Impede o envio do formulário
+                } else {
+                    botao.innerText = "Emitindo...";
+                    botao.disabled = true;
+                }
             });
         });
 
