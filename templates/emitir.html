@@ -4,27 +4,65 @@
     <meta charset="UTF-8">
     <title>Emissão de Senhas</title>
     <link rel="stylesheet" href="{{ url_for('static', filename='css/emitir.css') }}">
+    <script>
+        // Máscara de CPF com limite de 11 dígitos
+        document.addEventListener("DOMContentLoaded", () => {
+            const cpf = document.getElementById('cpf');
+            if (cpf) {
+                cpf.addEventListener('input', () => {
+                    cpf.value = cpf.value
+                        .replace(/\D/g, '')
+                        .slice(0, 11)
+                        .replace(/(\d{3})(\d)/, '$1.$2')
+                        .replace(/(\d{3})(\d)/, '$1.$2')
+                        .replace(/(\d{3})(\d{1,2})$/, '$1-$2');
+                });
+            }
+
+            // Bloquear clique duplo e alterar texto do botão
+            const form = document.querySelector("form");
+            const botao = document.getElementById("botaoEmitir");
+            form.addEventListener("submit", function () {
+                botao.innerText = "Emitindo...";
+                botao.disabled = true;
+            });
+        });
+
+        // Confirmação para atendimento prioritário
+        function verificarTipo() {
+            const tipo = document.querySelector('select[name="tipo"]').value;
+            if (tipo === 'P') {
+                return confirm("Este atendimento é exclusivo para:\n\n- Idosos\n- Gestantes\n- Pessoas com deficiência\n- Pessoas com criança de colo\n\nVocê se encaixa nesse perfil?");
+            }
+            return true;
+        }
+    </script>
 </head>
 <body>
     <h1>Emitir Senha</h1>
 
     {% if mensagem %}
-        <p style="color: green;">{{ mensagem }}</p>
+        <p style="color: green; font-size: 1.1em;">✅ {{ mensagem }}<br><small>Aguarde ser chamado no painel.</small></p>
     {% endif %}
 
-    <form method="POST" action="{{ url_for('senha.emitir') }}">
+    <form method="POST" action="{{ url_for('senha.emitir') }}" onsubmit="return verificarTipo();">
         <label for="nome">Nome:</label>
         <input type="text" name="nome" required>
+
         <label for="cpf">CPF:</label>
-        <input type="text" name="cpf" required>
+        <input type="text" name="cpf" id="cpf" required>
+
         <label for="tipo">Tipo de Atendimento:</label>
         <select name="tipo">
-            <option value="N">Normal</option>
-            <option value="P">Prioritário</option>
+            <option value="N">🧍 Atendimento Normal</option>
+            <option value="P">♿ Atendimento Prioritário</option>
         </select>
 
-        <button type="submit">Emitir Senha</button>
+        <small style="color: #777; margin-bottom: 10px;">
+            Prioritário: idosos, gestantes, PCDs e pessoas com criança de colo.
+        </small>
+
+        <button type="submit" id="botaoEmitir">Emitir Senha</button>
     </form>
 </body>
 </html>
-
